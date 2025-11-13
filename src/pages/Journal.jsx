@@ -7,25 +7,26 @@ export const Journal = () => {
   const [date, setDate] = useState(() => new Date().toISOString().substr(0, 10));
   const [isToday, setIsToday] = useState(true);
   const [loading, setLoading] = useState(false);
-const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+  const [hasEntryToday, setHasEntryToday] = useState(false);
+  const [isEditing, setIsEditing] = useState(true);
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("accessToken");
   const user = JSON.parse(localStorage.getItem("user") || "{}");
   const uid = user?.id;
 
   const today = new Date().toISOString().slice(0, 10);
-  const dailyKey = `user-${uid}-daily`;
 
-  const loadDaily = () => JSON.parse(localStorage.getItem(dailyKey) || "{}");
-  const saveDaily = (obj) => localStorage.setItem(dailyKey, JSON.stringify(obj));
-
-  const addActivity = useCallback((uid, text, meta = "") => {
-    const key = `user-${uid}-activity`;
-    const arr = JSON.parse(localStorage.getItem(key) || "[]");
-    arr.unshift({ text, meta, ts: Date.now() });
-    if (arr.length > 20) arr.length = 20;
-    localStorage.setItem(key, JSON.stringify(arr));
-  }, []);
+  const addActivity = useCallback(
+    (uid, text, meta = "") => {
+      const key = `user-${uid}-activity`;
+      const arr = JSON.parse(localStorage.getItem(key) || "[]");
+      arr.unshift({ text, meta, ts: Date.now() });
+      if (arr.length > 20) arr.length = 20;
+      localStorage.setItem(key, JSON.stringify(arr));
+    },
+    []
+  );
 
   useEffect(() => {
     if (uid) addActivity(uid, "Journal Opened", "");
@@ -33,23 +34,32 @@ const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   useEffect(() => {
     setIsToday(date === today);
-    fetchJournal();
+    fetchJournal(date);
+    // Reset editing state on date change (only allow editing for today)
+    if (date !== today) setIsEditing(false);
+    else setIsEditing(true);
   }, [date]);
 
-  const fetchJournal = async () => {
+  const fetchJournal = async (selectedDate) => {
     try {
       const res = await axios.get(
-        `${BASE_URL}/getjournal?date=${date}`,
+        `${BASE_URL}/getjournal?date=${selectedDate}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      if (res.data?.journals?.length > 0) setJournalText(res.data.journals[0].content);
-      else setJournalText("");
+      if (res.data?.journals?.length > 0) {
+        setJournalText(res.data.journals[0].content);
+        if (selectedDate === today) setHasEntryToday(true);
+        else setHasEntryToday(false);
+      } else {
+        setJournalText("");
+        if (selectedDate === today) setHasEntryToday(false);
+      }
     } catch {
       setJournalText("");
+      setHasEntryToday(false);
     }
   };
 
-  
   const saveJournal = async () => {
     try {
       setLoading(true);
@@ -66,13 +76,21 @@ const BASE_URL = import.meta.env.VITE_API_BASE_URL;
         }
       );
       alert("Journal Saved ✅");
+      setHasEntryToday(true);
+      // After saving, disable input and show Edit button
+      setIsEditing(false);
     } catch (err) {
       alert("Failed to save");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
-  // typing tracking
+  const handleEditClick = () => {
+    setIsEditing(true);
+  };
+
+  // Typing tracking logic remains unchanged
   const [typingStart, setTypingStart] = useState(null);
   const [totalTypingTime, setTotalTypingTime] = useState(0);
 
@@ -114,11 +132,11 @@ const BASE_URL = import.meta.env.VITE_API_BASE_URL;
       const minutes = Math.floor(combined / 60000);
 
       if (minutes > 0) {
-        const daily = loadDaily();
+        const daily = JSON.parse(localStorage.getItem(`user-${uid}-daily`) || "{}");
         const todayObj = daily[today] || { meditation: 0, journal: 0, mood: 0 };
         todayObj.journal += minutes;
         daily[today] = todayObj;
-        saveDaily(daily);
+        localStorage.setItem(`user-${uid}-daily`, JSON.stringify(daily));
 
         setTotalTypingTime(0);
         setTypingStart(Date.now());
@@ -150,16 +168,24 @@ const BASE_URL = import.meta.env.VITE_API_BASE_URL;
           className="w-full h-60 focus:outline-none"
           placeholder={isToday ? "Write what's on your mind today..." : "You cannot edit past journals"}
           value={journalText}
-          disabled={!isToday}
+          disabled={!isToday || !isEditing}
           onChange={handleTyping}
           onBlur={handleBlur}
         />
-        <div className="text-center mt-5">
-          {isToday && (
+        <div className="text-center mt-5 space-x-4">
+          {isToday && !isEditing && hasEntryToday && (
+            <button
+              onClick={handleEditClick}
+              className="bg-lightgreen text-white font-medium py-2 px-8 rounded-full hover:bg-aquaGlow transition"
+            >
+              Edit Journal
+            </button>
+          )}
+          {isToday && isEditing && (
             <button
               onClick={saveJournal}
               className="bg-lightgreen text-white font-medium py-2 px-8 rounded-full hover:bg-aquaGlow transition"
-              disabled={loading}
+              disabled={loading || journalText.trim() === ""}
             >
               {loading ? "Saving..." : "Save Journal"}
             </button>

@@ -8,18 +8,41 @@ const MiniQuizzes = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState([]);
 
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const uid = user?.id;
+  const profession = (user?.profession || localStorage.getItem("profession"))?.toLowerCase();
+
+  const addActivity = (uid, text, meta = "") => {
+    const key = `user-${uid}-activity`;
+    const arr = JSON.parse(localStorage.getItem(key) || "[]");
+    arr.unshift({ text, meta, ts: Date.now() });
+    if (arr.length > 20) arr.length = 20;
+    localStorage.setItem(key, JSON.stringify(arr));
+  };
+
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
-        const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/quiz`)
-;
-        setQuestions(res.data.questions.questions);
+        let url = "";
+        if (profession === "student") {
+          url = `${import.meta.env.VITE_API_BASE_URL}/studentquiz`;
+          const res = await axios.get(url);
+          setQuestions(res.data.questions);
+        } else {
+          url = `${import.meta.env.VITE_API_BASE_URL}/quiz`;
+          const res = await axios.get(url);
+          setQuestions(res.data.questions.questions);
+        }
       } catch (error) {
         console.error("Failed to load questions:", error);
       }
     };
     fetchQuestions();
-  }, []);
+  }, [profession]);
+
+  useEffect(() => {
+    if (uid) addActivity(uid, "Opened Mini Quiz");
+  }, [uid]);
 
   const currentQuestion = questions[currentIndex];
 
@@ -41,57 +64,106 @@ const MiniQuizzes = () => {
     setCurrentIndex((prev) => prev - 1);
   };
 
-  const handleSubmit = async () => {
-    if (
-      answers.length !== questions.length ||
-      answers.includes(undefined) ||
-      answers.includes("")
-    ) {
-      alert("Please answer all questions before submitting.");
-      return;
-    }
+ const handleSubmit = async () => {
+  if (
+    answers.length !== questions.length ||
+    answers.includes(undefined) ||
+    answers.includes("")
+  ) {
+    alert("Please answer all questions before submitting.");
+    return;
+  }
 
+  const token = localStorage.getItem("accessToken");
+  if (!token) {
+    alert("You must be logged in to submit.");
+    return;
+  }
+
+  
+  localStorage.setItem("studentAnswers", JSON.stringify(answers));
+
+  
+  const keys = [
+    "anxiety_level",
+    "self_esteem",
+    "mental_health_history",
+    "depression",
+    "headache",
+    "blood_pressure",
+    "sleep_quality",
+    "breathing_problem",
+    "noise_level",
+    "living_conditions",
+    "safety",
+    "basic_needs",
+    "academic_performance",
+    "study_load",
+    "teacher_student_relationship",
+    "future_career_concerns",
+    "social_support",
+    "peer_pressure",
+    "extracurricular_activities",
+    "bullying",
+  ];
+
+  try {
+    if (profession === "student") {
     
-    const fixedAnswers = [...answers];
-    fixedAnswers[0] = Number(fixedAnswers[0]);
+      const fixedAnswers = answers.map(Number);
 
-    
-    const token = localStorage.getItem("token");
+      
+      const payload = {};
+      fixedAnswers.forEach((val, idx) => {
+        payload[keys[idx]] = val;
+      });
 
-    if (!token) {
-      alert("You must be logged in to submit.");
-      return;
-    }
+      console.log("Submitting answers payload:", payload);
 
-    try {
-      console.log("Sending to backend:", fixedAnswers);
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/stuquizsubmit`,
+        payload,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      navigate("/result", { state: response.data.result });
+    } else {
+      
+      const fixedAnswers = answers.map(Number);
 
       const response = await axios.post(
         `${import.meta.env.VITE_API_BASE_URL}/submit`,
         { answers: fixedAnswers },
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
 
-      console.log("Submit Success:", response.data);
       navigate("/result", { state: response.data.result });
-
-    } catch (err) {
-      console.log("Submit Error:", err.response?.data || err.message);
-      alert(err.response?.data?.error || "Submission failed. Try again.");
     }
-  };
+  } catch (err) {
+    alert(err.response?.data?.error || "Submission failed. Try again.");
+  }
+};
 
   if (questions.length === 0)
-    return <p className="text-center mt-10 text-lg text-darkblue">Loading...</p>;
+    return (
+      <p className="text-center mt-10 text-lg text-darkblue">Loading...</p>
+    );
 
   const progressPercent = ((currentIndex + 1) / questions.length) * 100;
 
   return (
-    <div className="min-h-screen bg-backg flex flex-col items-center pt-50 px-4">
+    <div className="min-h-screen bg-backg flex flex-col items-center pt-50 px-4 relative">
+      
+      <button
+        onClick={() => navigate("/dashboard")}
+        className="absolute top-4 right-4 px-8 py-4 mt-30 text-md font-bold text-lightgreen border border-lightgreen rounded-lg hover:bg-lightgreen hover:text-white transition"
+      >
+        Skip
+      </button>
 
       <div className="w-full max-w-3xl flex justify-between items-center mb-2 px-2">
         <p className="text-lg font-semibold text-darkblue">
@@ -111,30 +183,49 @@ const MiniQuizzes = () => {
 
       <div className="w-full max-w-3xl bg-white shadow-lg rounded-xl p-8 border border-lightgrey">
         <p className="text-xl font-medium text-darkblue mb-6">
-          {currentQuestion.questiontext}
+          {currentQuestion.questiontext || currentQuestion.question}
         </p>
 
-        {currentQuestion.options ? (
+        {typeof currentQuestion.min === "number" && typeof currentQuestion.max === "number" ? (
+          <div className="flex flex-col space-y-4">
+            <input
+              type="range"
+              min={currentQuestion.min}
+              max={currentQuestion.max}
+              value={
+                answers[currentIndex] !== undefined
+                  ? answers[currentIndex]
+                  : currentQuestion.min
+              }
+              onChange={(e) => handleAnswerChange(Number(e.target.value))}
+              className="w-full accent-lightgreen"
+            />
+            <div className="flex justify-between text-sm text-gray-600">
+              <span>{currentQuestion.scale?.[currentQuestion.min.toString()] || currentQuestion.min}</span>
+              <span>{currentQuestion.scale?.[currentQuestion.max.toString()] || currentQuestion.max}</span>
+            </div>
+            <p className="text-center text-lg font-semibold text-darkblue">
+              {answers[currentIndex] !== undefined ? answers[currentIndex] : currentQuestion.min}
+            </p>
+          </div>
+        ) : currentQuestion.options ? (
           <div className="space-y-4">
-            {currentQuestion.options.map((opt, idx) => (
+            {Object.entries(currentQuestion.options).map(([value, label]) => (
               <label
-                key={idx}
-                className={`block border rounded-lg px-4 py-3 cursor-pointer transition
-                ${
-                  answers[currentIndex] === opt
-                    ? "border-lightgreen bg-lightgrey"
-                    : "border-lightgrey"
+                key={value}
+                className={`block border rounded-lg px-4 py-3 cursor-pointer transition ${
+                  answers[currentIndex] === value ? "border-lightgreen bg-lightgrey" : "border-lightgrey"
                 }`}
               >
                 <input
                   type="radio"
                   name="option"
-                  value={opt}
-                  checked={answers[currentIndex] === opt}
+                  value={value}
+                  checked={answers[currentIndex] === value}
                   onChange={(e) => handleAnswerChange(e.target.value)}
                   className="mr-3 accent-lightgreen"
                 />
-                {opt}
+                {label}
               </label>
             ))}
           </div>
