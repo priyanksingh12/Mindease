@@ -87,30 +87,28 @@ const Profile = () => {
   }, [uid]);
 
   useEffect(() => {
-  const prof = localStorage.getItem("profession") || "Not Set";
-  setProfileData((prev) => ({ ...prev, profession: prof }));
-}, []);
-
+    const prof = localStorage.getItem("profession") || "Not Set";
+    setProfileData((prev) => ({ ...prev, profession: prof }));
+  }, []);
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center px-4">
-      <div className="absolute left-0 top-0 w-1/2 h-full bg-darkblue"></div>
-      <div className="absolute right-0 top-0 w-1/2 h-full bg-lightgreen"></div>
+    <div className="relative min-h-screen flex flex-col px-4 sm:px-6 md:px-10 lg:px-20 bg-backg">
+      <div className="absolute left-0 top-0 w-1/2 h-full bg-darkblue hidden sm:block"></div>
+      <div className="absolute right-0 top-0 w-1/2 h-full bg-lightgreen hidden sm:block"></div>
 
-      <div className="relative z-10 w-full h-200 pb-10 mb-10  max-w-5xl bg-backg  sm:p-10 rounded-lg shadow-xl">
+      <div className="relative z-10 w-full max-w-5xl bg-backg sm:p-10 rounded-lg shadow-xl my-10 mx-auto">
         <h1 className="text-3xl font-bold text-black mb-6 text-center sm:text-left">My Profile</h1>
 
-        <div className="bg-white rounded-lg p-10 flex flex-col sm:flex-row justify-around  items-center gap-6">
+        <div className="bg-white rounded-lg p-6 sm:p-10 flex flex-col sm:flex-row justify-around items-center gap-6">
           <div className="flex items-center gap-4">
             {profilePhoto ? (
-              <img src={profilePhoto} alt="profile" className="w-25 h-25 rounded-full object-cover" />
+              <img src={profilePhoto} alt="profile" className="w-24 h-24 rounded-full object-cover" />
             ) : (
               <FaUser size={90} className="bg-lightgreen text-white rounded-full p-3" />
             )}
-            <div className="text-center sm:text-left leading-relaxed">
-              <h2 className="text-2xl font-semibold">{profileData.fullName}</h2>
-              
-              <p className="text-gray-600 break-all">{profileData.email}</p>
+            <div className="text-center sm:text-left leading-relaxed max-w-xs sm:max-w-sm">
+              <h2 className="text-2xl font-semibold truncate">{profileData.fullName}</h2>
+              <p className="text-gray-600 break-words">{profileData.email}</p>
             </div>
           </div>
 
@@ -124,28 +122,30 @@ const Profile = () => {
                   setIsEditing(true);
                 }
               }}
-              className="bg-aquaGlow text-white px-5 py-4 rounded-full flex items-center gap-2 hover:bg-lightgreen transition text-xl"
+              className="bg-aquaGlow text-white px-5 py-4 rounded-full flex items-center gap-2 hover:bg-lightgreen transition text-xl whitespace-nowrap"
             >
               {isEditing ? "Cancel" : "Edit"} <FaRegEdit size={20} />
             </button>
 
             <button
               onClick={handleLogout}
-              className="bg-red-500 text-white px-5 py-2 rounded-full hover:bg-red-600 transition"
+              className="bg-red-500 text-white px-5 py-2 rounded-full hover:bg-red-600 transition whitespace-nowrap"
             >
               <FaSignOutAlt size={20} />
             </button>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow-md p-6 py-15
-         mt-8">
+        <div
+          className="bg-white rounded-lg shadow-md px-6 py-8 mt-8"
+          style={{ minHeight: "400px" }}
+        >
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-            <h2 className="text-3xl font-bold text-black mb-5">Personal Information</h2>
+            <h2 className="text-3xl font-bold text-black mb-5 flex-1 min-w-0">Personal Information</h2>
             {isEditing && (
               <button
                 onClick={handleSave}
-                className="bg-lightgreen text-white px-5 py-2 rounded-full flex items-center gap-2 hover:bg-aquaGlow transition"
+                className="bg-lightgreen text-white px-5 py-2 rounded-full flex items-center gap-2 hover:bg-aquaGlow transition whitespace-nowrap"
               >
                 Save <FaSave size={16} />
               </button>
@@ -155,12 +155,12 @@ const Profile = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div>
               <p className="text-gray-600 text-xl font-semibold">Full Name</p>
-              <p className="font-medium text-xl">{profileData.fullName}</p>
+              <p className="font-medium text-xl truncate">{profileData.fullName}</p>
             </div>
 
             <div>
               <p className="text-gray-600 text-xl font-semibold">Profession</p>
-              <p className="font-medium text-xl">{profileData.profession}</p>
+              <p className="font-medium text-xl truncate">{profileData.profession}</p>
             </div>
 
             <div>
@@ -180,7 +180,7 @@ const Profile = () => {
                   <option value="Other">Other</option>
                 </select>
               ) : (
-                <p className="font-medium text-xl">{profileData.gender}</p>
+                <p className="font-medium text-xl truncate">{profileData.gender}</p>
               )}
             </div>
 
@@ -199,7 +199,7 @@ const Profile = () => {
                   {phoneError && <p className="text-red-600 mt-1 text-lg">{phoneError}</p>}
                 </>
               ) : (
-                <p className="font-medium">{profileData.phone}</p>
+                <p className="font-medium truncate">{profileData.phone}</p>
               )}
             </div>
 
@@ -211,7 +211,7 @@ const Profile = () => {
                   name="age"
                   value={profileData.age}
                   onChange={handleChange}
-                  className="border p-2 rounded w-full"
+                  className="border p-2 rounded w-full text-xl"
                 />
               ) : (
                 <p className="font-medium text-xl">{profileData.age}</p>
@@ -220,7 +220,7 @@ const Profile = () => {
 
             <div>
               <p className="text-gray-600 text-xl font-semibold">Email</p>
-              <p className="font-medium text-xl break-all">{profileData.email}</p>
+              <p className="font-medium text-xl break-words">{profileData.email}</p>
             </div>
           </div>
         </div>

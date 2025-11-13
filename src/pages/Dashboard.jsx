@@ -233,18 +233,25 @@ function MoodPie({ items }) {
 const BigAction = ({ img, label, onClick }) => (
   <button
     onClick={onClick}
-    className="flex flex-col items-center justify-end rounded-2xl bg-blend-color ring-1 ring-darkblue-200 hover:shadow-lg transition w-full max-w-2xl mx-auto h-44 sm:h-48 my-4 "
+    className="
+      bg-backg rounded-2xl shadow-md shadow-black/40 p-6 sm:p-8 text-center 
+      transform transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-black/70 
+      border-2 border-darkblue border-opacity-100 hover:border-opacity-40
+      w-full max-w-xs mx-auto sm:max-w-none
+      flex flex-col items-center
+    "
   >
-    <div className="h-27 w-22 rounded-2xl bg-aquaGlow/15 flex items-center justify-center text-2xl">
-      <img src={img} alt={label} className="h-12 w-12 object-contain" />
+    <div className="h-20 w-20 sm:h-27 sm:w-22 rounded-2xl bg-aquaGlow/15 flex items-center justify-center mb-3 text-2xl">
+      <img src={img} alt={label} className="h-12 w-12 sm:h-16 sm:w-16 object-contain" />
     </div>
-    <span className="mt-3 font-semibold pb-6 text-lg text-center">{label}</span>
+    <span className="mt-3 font-semibold text-base sm:text-lg text-center leading-tight">{label}</span>
   </button>
 );
 
+
 const Card = ({ title, children, className = "" }) => (
   <div className={`rounded-2xl bg-blend-color p-5 ${className}`}>
-    {title && <h3 className="text-base font-semibold mb-3">{title}</h3>}
+    {title && <h3 className="text-xl font-semibold mb-7">{title}</h3>}
     {children}
   </div>
 );
@@ -407,15 +414,15 @@ export default function Dashboard() {
           </div>
         </section>
 
-        <section className="grid grid-cols-1 md:grid-cols-2 gap-6 px-4 sm:px-6 lg:px-8">
-          <Card title="Today's Goals">
-            <ul className="space-y-3">
+        <section className="grid grid-cols-1 md:grid-cols-2 gap-6 text-lg px-4 sm:px-6 lg:px-8">
+          <Card title="Today's Goals" >
+            <ul className="space-y-5">
               {goals.map((g) => (
                 <li
                   key={g.id}
                   className="flex items-center justify-between rounded-xl bg-[#FBF6EA] ring-1 ring-slate-200 px-4 py-3"
                 >
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-5">
                     <span className="text-lg">•</span>
                     <div>
                       <p className="font-medium">{g.text}</p>
@@ -436,7 +443,7 @@ export default function Dashboard() {
           </Card>
 
           <Card title="Recent Activity">
-            <ul className="space-y-3">
+            <ul className="space-y-7">
               {activity.length === 0 && (
                 <li className="text-slate-500">No recent activity</li>
               )}
@@ -445,7 +452,7 @@ export default function Dashboard() {
                   key={a.ts ?? idx}
                   className="flex items-center justify-between rounded-xl bg-[#FBF6EA] ring-1 ring-slate-200 px-4 py-3"
                 >
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-5">
                     <span className="text-lg">📝</span>
                     <p className="font-medium">{a.text}</p>
                   </div>
@@ -457,22 +464,22 @@ export default function Dashboard() {
         </section>
 
         <section className="px-4 sm:px-6 lg:px-8">
-          <h2 className="text-xl font-semibold mb-3">Overview</h2>
+          <h2 className="text-2xl font-semibold mb-3">Overview</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="rounded-2xl p-5 bg-lightgreen/30">
-              <p className="text-sm">{medWeek} min</p>
-              <p className="text-xs text-slate-700">Meditation this week</p>
-              <p className="text-xs mt-2 font-medium">{medStreak} day streak</p>
+              <p className="text-md">{medWeek} min</p>
+              <p className="text-md text-slate-700">Meditation this week</p>
+              <p className="text-md mt-2 font-medium">{medStreak} day streak</p>
             </div>
             <div className="rounded-2xl p-5 bg-aquaGlow/20">
-              <p className="text-sm">{journalWeek} min</p>
-              <p className="text-xs text-slate-700">Journaling this week</p>
-              <p className="text-xs mt-2 font-medium">{journalStreak} day streak</p>
+              <p className="text-md">{journalWeek} min</p>
+              <p className="text-md text-slate-700">Journaling this week</p>
+              <p className="text-md mt-2 font-medium">{journalStreak} day streak</p>
             </div>
             <div className="rounded-2xl p-5 bg-pinkGlow/20">
-              <p className="text-sm">{moodWeek}</p>
-              <p className="text-xs text-slate-700">Mood checks this week</p>
-              <p className="text-xs mt-2 font-medium">{moodStreak} day streak</p>
+              <p className="text-md">{moodWeek}</p>
+              <p className="text-md text-slate-700">Mood checks this week</p>
+              <p className="text-md mt-2 font-medium">{moodStreak} day streak</p>
             </div>
           </div>
         </section>

@@ -35,7 +35,6 @@ export const Journal = () => {
   useEffect(() => {
     setIsToday(date === today);
     fetchJournal(date);
-    // Reset editing state on date change (only allow editing for today)
     if (date !== today) setIsEditing(false);
     else setIsEditing(true);
   }, [date]);
@@ -77,7 +76,6 @@ export const Journal = () => {
       );
       alert("Journal Saved ✅");
       setHasEntryToday(true);
-      // After saving, disable input and show Edit button
       setIsEditing(false);
     } catch (err) {
       alert("Failed to save");
@@ -90,7 +88,6 @@ export const Journal = () => {
     setIsEditing(true);
   };
 
-  // Typing tracking logic remains unchanged
   const [typingStart, setTypingStart] = useState(null);
   const [totalTypingTime, setTotalTypingTime] = useState(0);
 
@@ -147,36 +144,36 @@ export const Journal = () => {
   }, [typingStart, totalTypingTime]);
 
   return (
-    <div className="bg-backg min-h-screen w-full py-35 px-4">
+    <div className="bg-backg min-h-screen w-full py-10 px-4 sm:px-6 md:px-10">
       <div className="text-center mb-10">
         <div className="text-4xl text-lightgreen mb-2 flex justify-center"><FaBook /></div>
-        <h1 className="text-darkblue font-semibold text-3xl">Your Daily Journal</h1>
+        <h1 className="text-darkblue font-semibold text-2xl sm:text-3xl md:text-4xl">Your Daily Journal</h1>
       </div>
 
-      <div className="max-w-3xl mx-auto mb-6">
+      <div className="max-w-3xl mx-auto mb-6 px-4 sm:px-0">
         <input
           type="date"
-          className="border border-lightgreen p-2 rounded-lg"
+          className="border border-lightgreen p-2 rounded-lg w-full max-w-xs mx-auto block"
           value={date}
           onChange={(e) => setDate(e.target.value)}
           max={today}
         />
       </div>
 
-      <div className="max-w-3xl mx-auto bg-lightgrey border-2 border-lightgreen rounded-xl p-6 shadow-sm">
+      <div className="max-w-3xl mx-auto bg-lightgrey border-2 border-lightgreen rounded-xl p-6 shadow-sm px-4 sm:px-6">
         <textarea
-          className="w-full h-60 focus:outline-none"
+          className="w-full min-h-[15rem] sm:min-h-[20rem] focus:outline-none resize-y rounded-md p-3 text-base sm:text-lg leading-relaxed"
           placeholder={isToday ? "Write what's on your mind today..." : "You cannot edit past journals"}
           value={journalText}
           disabled={!isToday || !isEditing}
           onChange={handleTyping}
           onBlur={handleBlur}
         />
-        <div className="text-center mt-5 space-x-4">
+        <div className="text-center mt-5 space-x-4 flex flex-col sm:flex-row justify-center gap-4">
           {isToday && !isEditing && hasEntryToday && (
             <button
               onClick={handleEditClick}
-              className="bg-lightgreen text-white font-medium py-2 px-8 rounded-full hover:bg-aquaGlow transition"
+              className="bg-lightgreen text-white font-medium py-2 px-8 rounded-full hover:bg-aquaGlow transition w-full sm:w-auto"
             >
               Edit Journal
             </button>
@@ -184,7 +181,7 @@ export const Journal = () => {
           {isToday && isEditing && (
             <button
               onClick={saveJournal}
-              className="bg-lightgreen text-white font-medium py-2 px-8 rounded-full hover:bg-aquaGlow transition"
+              className="bg-lightgreen text-white font-medium py-2 px-8 rounded-full hover:bg-aquaGlow transition w-full sm:w-auto"
               disabled={loading || journalText.trim() === ""}
             >
               {loading ? "Saving..." : "Save Journal"}

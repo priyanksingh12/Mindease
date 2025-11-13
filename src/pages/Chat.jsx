@@ -98,7 +98,7 @@ const addActivity = (uid, text, meta = "") => {
           {messages.map((m, i) => (
             <div
               key={i}
-              className={`max-w-[40%] px-5 py-4 rounded-2xl text-md shadow-sm left-100 right-100 ${
+              className={`max-w-[40%] px-4 mt-48 py-4 rounded-2xl text-md shadow-sm left-100 right-100 ${
                 m.role === "user"
                   ? "ml-auto bg-lightgreen text-white"
                   : "mr-auto bg-lightgrey text-darkblue border border-lightgreen"
