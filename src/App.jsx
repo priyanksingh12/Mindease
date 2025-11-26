@@ -1,10 +1,10 @@
-import React, { useEffect } from "react";
+import React from "react";
 import {
   BrowserRouter as Router,
   Routes,
   Route,
   Navigate,
-  useNavigate,
+  useLocation,
 } from "react-router-dom";
 
 import Navbar from "./components/Navbar";
@@ -25,27 +25,20 @@ import Profession from "./pages/Profession";
 import Chat from "./pages/Chat";
 import Dashboard from "./pages/Dashboard";
 
-const PrivateRoute = ({ children }) => {
+const RequireAuth = ({ children }) => {
   const accessToken = localStorage.getItem("accessToken");
-  return accessToken ? children : <Navigate to="/login" replace />;
+  const location = useLocation();
+
+  console.log("RequireAuth check:", { accessToken, path: location.pathname });
+
+  if (!accessToken) {
+    return <Navigate to="/login" replace state={{ from: location }} />;
+  }
+
+  return children;
 };
 
 const AppWrapper = () => {
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const handleBackButton = () => {
-      const accessToken = localStorage.getItem("accessToken");
-      if (!accessToken) {
-        window.history.pushState(null, "", window.location.href);
-        navigate("/login", { replace: true });
-      }
-    };
-
-    window.addEventListener("popstate", handleBackButton);
-    return () => window.removeEventListener("popstate", handleBackButton);
-  }, [navigate]);
-
   return (
     <Routes>
       <Route path="/" element={<Navigate to="/landing" />} />
@@ -66,85 +59,85 @@ const AppWrapper = () => {
       <Route
         path="/dashboard"
         element={
-          <PrivateRoute>
+          <RequireAuth>
             <>
               <Navbar />
               <Dashboard />
               <Footer />
             </>
-          </PrivateRoute>
+          </RequireAuth>
         }
       />
 
       <Route
         path="/profession"
         element={
-          <PrivateRoute>
+          <RequireAuth>
             <>
               <Profession />
             </>
-          </PrivateRoute>
+          </RequireAuth>
         }
       />
 
       <Route
         path="/chat"
         element={
-          <PrivateRoute>
+          <RequireAuth>
             <>
               <Chat />
             </>
-          </PrivateRoute>
+          </RequireAuth>
         }
       />
 
       <Route
         path="/journal"
         element={
-          <PrivateRoute>
+          <RequireAuth>
             <>
               <Navbar />
               <Journal />
               <Footer />
             </>
-          </PrivateRoute>
+          </RequireAuth>
         }
       />
 
       <Route
         path="/meditations"
         element={
-          <PrivateRoute>
+          <RequireAuth>
             <>
               <Navbar />
               <Meditations />
               <Footer />
             </>
-          </PrivateRoute>
+          </RequireAuth>
         }
       />
 
       <Route
         path="/mooddetection"
         element={
-          <PrivateRoute>
+          <RequireAuth>
             <>
               <Navbar />
               <MoodDetection />
               <Footer />
             </>
-          </PrivateRoute>
+          </RequireAuth>
         }
       />
 
       <Route
         path="/profile"
         element={
-          <PrivateRoute>
+          <RequireAuth>
             <>
               <Profile />
             </>
-          </PrivateRoute>
+          </RequireAuth>
         }
       />
 
@@ -161,25 +154,25 @@ const AppWrapper = () => {
       <Route
         path="/miniques"
         element={
-          <PrivateRoute>
+          <RequireAuth>
             <>
               <Navbar />
               <MiniQuizzes />
             </>
-          </PrivateRoute>
+          </RequireAuth>
         }
       />
 
       <Route
         path="/result"
         element={
-          <PrivateRoute>
+          <RequireAuth>
             <>
               <Navbar />
               <Result />
               <Footer />
             </>
-          </PrivateRoute>
+          </RequireAuth>
         }
       />
     </Routes>

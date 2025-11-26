@@ -10,14 +10,14 @@ export default function About() {
       <div className="pt-10 w-full flex justify-center">
         <div className="relative w-[95%] md:w-[80%] max-w-6xl">
 
-          {/* full width image */}
+        
           <img
             src={Abot}
             alt="Plants Row"
             className="w-full h-auto rounded-xl shadow-lg"
           />
 
-          {/* text overlay */}
+        
         <div className="absolute inset-0 flex flex-col items-center justify-start px-8 text-center pt-14 md:pt-24">
 
             <h2 className="text-4xl md:text-5xl font-bold mb-6">

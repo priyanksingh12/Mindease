@@ -159,7 +159,7 @@ function Gauge({ value }) {
   return (
     <div className="relative w-full max-w-xl mx-auto aspect-[2/1] sm:aspect-[3/2]">
       <Doughnut data={data} options={options} />
-      {/* Needle */}
+      
       <div
         className="absolute left-1/2 bottom-[18%] origin-bottom"
         style={{ transform: `translateX(-50%) rotate(${angle}deg)` }}
@@ -167,7 +167,7 @@ function Gauge({ value }) {
         <div className="h-20 sm:h-28 w-1.5 bg-darkblue rounded-full" />
         <div className="h-3 w-3 -mt-1 rounded-full bg-darkblue mx-auto" />
       </div>
-      {/* Center circle */}
+      
       <div className="absolute left-1/2 bottom-[18%] -translate-x-1/2 translate-y-1/2">
         <div className="h-6 w-6 rounded-full bg-white ring-2 ring-darkblue" />
       </div>

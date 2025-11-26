@@ -77,7 +77,7 @@ const Profile = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("user");
-    localStorage.removeItem("token");
+    localStorage.removeItem("accessToken");
     localStorage.removeItem("profession");
     navigate("/login", { replace: true });
   };
