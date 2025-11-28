@@ -1,13 +1,12 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { FaGoogle, FaEye, FaEyeSlash } from "react-icons/fa";
 
-
-import Man from "../assets/man.jpg";
-import Woman from "../assets/woman.jpg";
-import Logp from "../assets/logp.jpg";
-
+import Man from "../assets/man.jpeg";
+import Woman from "../assets/woman.jpeg";
+import Logp from "../assets/logp.jpeg";
+import Yoga from "../assets/yoga.gif"
 
 const Login = () => {
   const navigate = useNavigate();
@@ -17,7 +16,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  const images = [Man, Woman, Logp];
+  const images = [Man];
   const [currentImg, setCurrentImg] = useState(0);
 
   useEffect(() => {
@@ -36,7 +35,6 @@ const Login = () => {
       setError("Please enter a valid email that starts with a letter.");
       return;
     }
-
 
     if (formData.password.length < 6) {
       setError("Password must be at least 6 characters long.");
@@ -84,92 +82,99 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen w-full flex bg-backg overflow-hidden">
-      <div className="hidden md:block w-1/2 h-screen p-5 pt-15 ">
-        <img
-          src={images[currentImg]}
-          alt="auth-img"
-          className="w-full h-200 object-cover transition-all duration-700 rounded-2xl"
-        />
-      </div>
+    <>
+      <div className="min-h-screen flex bg-backg justify-center items-center px-4">
 
-      <div className="flex items-center justify-between w-full md:w-1/2 p-6 relative">
-        <div className="z-10 text-darkblue p-8 w-full max-w-xl">
-          <h1 className="text-3xl font-bold mb-2">
-            Welcome back!
-            <br />
-            <span>Login to your account</span>
-          </h1>
-
-          <p className="text-darkblue text-lg font-bold mt-5 mb-10">
-            Its nice to see you again.
-          </p>
-
-          <form className="space-y-4" onSubmit={handleSubmit}>
-            <input
-              type="email"
-              placeholder="Email address"
-              value={formData.email}
-              onChange={(e) =>
-                setFormData({ ...formData, email: e.target.value })
-              }
-              className="w-full px-4 py-2 rounded-md bg- border border-lightgreen text-darkblue placeholder-darkblue focus:outline-none focus:ring-2 focus:ring-pinkGlow"
-              required
+        <div className="flex w-full max-w-7xl bg-blend-color  rounded-2xl shadow-2xl overflow-hidden">
+          
+          <div className="hidden md:block w-1/2  p-5 pt-15">
+            <img
+              src={images[currentImg]}
+              alt="auth-img"
+              className="w-full h-200 object-contain transition-all duration-700 rounded-2xl"
             />
-
-            <div className="relative">
-              <input
-                type={showPassword ? "text" : "password"}
-                placeholder="Password"
-                value={formData.password}
-                onChange={(e) =>
-                  setFormData({ ...formData, password: e.target.value })
-                }
-                className="w-full px-4 py-2 rounded-md bg-white-200 border border-lightgreen text-darkblue placeholder-darkblue focus:outline-none focus:ring-2 focus:ring-pinkGlow"
-                required
-              />
-
-              <span
-                className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-darkblue"
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                {showPassword ? <FaEye size={20} /> : <FaEyeSlash size={20} />}
-              </span>
-            </div>
-
-            {error && <p className="text-red-500 text-center">{error}</p>}
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-2 mt-2 bg-lightgreen text-white font-semibold rounded-md hover:bg-pinkGlow transition"
-            >
-              {loading ? "Logging in..." : "Log In"}
-            </button>
-          </form>
-
-          <div className="flex items-center my-5">
-            <div className="flex-grow border-t border-darkblue"></div>
-            <span className="mx-3 text-darkblue">OR</span>
-            <div className="flex-grow border-t border-darkblue"></div>
           </div>
 
-          <button
-            onClick={handleGoogleLogin}
-            className="w-full border border-darkblue bg-aquaGlow text-white py-2 rounded font-semibold flex items-center justify-center gap-3 hover:bg-pinkGlow transition border-none"
-          >
-            <FaGoogle /> Continue with Google
-          </button>
+          {/* Right side form */}
+          <div className="flex items-center justify-between w-full md:w-1/2 p-6 relative">
+            <div className="z-10 text-darkblue p-8 w-full max-w-xl">
+              <h1 className="text-3xl font-bold mb-2">
+                Welcome back!
+                <br />
+                <span>Login to your account</span>
+              </h1>
 
-          <p className="mt-6 text-center text-darkblue">
-            Don't have an account?{" "}
-            <Link to="/register" className="text-pinkGlow hover:underline">
-              Sign Up
-            </Link>
-          </p>
+              <p className="text-darkblue text-lg font-bold mt-5 mb-10">
+                Its nice to see you again.
+              </p>
+
+              <form className="space-y-4" onSubmit={handleSubmit}>
+                <input
+                  type="email"
+                  placeholder="Email address"
+                  value={formData.email}
+                  onChange={(e) =>
+                    setFormData({ ...formData, email: e.target.value })
+                  }
+                  className="w-full px-4 py-2 rounded-3xl border border-lightgreen text-darkblue placeholder-darkblue focus:outline-none focus:ring-2 focus:ring-pinkGlow"
+                  required
+                />
+
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Password"
+                    value={formData.password}
+                    onChange={(e) =>
+                      setFormData({ ...formData, password: e.target.value })
+                    }
+                    className="w-full px-4 py-2 rounded-3xl border border-lightgreen text-darkblue placeholder-darkblue focus:outline-none focus:ring-2 focus:ring-pinkGlow"
+                    required
+                  />
+
+                  <span
+                    className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-darkblue"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? <FaEye size={20} /> : <FaEyeSlash size={20} />}
+                  </span>
+                </div>
+
+                {error && <p className="text-red-500 text-center">{error}</p>}
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full py-2 mt-2 bg-lightgreen text-white font-semibold rounded-3xl hover:bg-pinkGlow transition"
+                >
+                  {loading ? "Logging in..." : "Log In"}
+                </button>
+              </form>
+
+              <div className="flex items-center my-5">
+                <div className="flex-grow border-t border-darkblue"></div>
+                <span className="mx-3 text-darkblue">OR</span>
+                <div className="flex-grow border-t border-darkblue"></div>
+              </div>
+
+              <button
+                onClick={handleGoogleLogin}
+                className="w-full border border-darkblue bg-aquaGlow text-white py-2 rounded-3xl font-semibold flex items-center justify-center gap-3 hover:bg-pinkGlow transition border-none"
+              >
+                <FaGoogle /> Continue with Google
+              </button>
+
+              <p className="mt-6 text-center text-darkblue">
+                Don't have an account?{" "}
+                <Link to="/register" className="text-pinkGlow hover:underline">
+                  Sign Up
+                </Link>
+              </p>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { registerUser } from "../api";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import Man from "../assets/man.jpg";
-import Woman from "../assets/woman.jpg";
-import Logp from "../assets/logp.jpg";
+import Man from "../assets/man.jpeg";
+import Woman from "../assets/woman.jpeg";
+import Logp from "../assets/logp.jpeg";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -20,7 +20,7 @@ const Register = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const images = [Man, Woman, Logp];
+  const images = [Man];
   const [currentImg, setCurrentImg] = useState(0);
 
   useEffect(() => {
@@ -41,7 +41,7 @@ if (!emailRegex.test(formData.email)) {
 }
 
 
-    // Password validation regexes
+    
     const uppercaseRegex = /[A-Z]/;
     const lowercaseRegex = /[a-z]/;
     const specialCharRegex = /[!@#$%^&*(),.?":{}|<>]/;
@@ -103,14 +103,18 @@ if (!emailRegex.test(formData.email)) {
   };
 
   return (
-    <div className="min-h-screen w-full flex bg-backg overflow-hidden">
-      <div className="hidden md:block w-1/2 h-screen p-5 pt-15 ">
-        <img
-          src={images[currentImg]}
-          alt="auth-img"
-          className="w-full h-200 object-cover transition-all duration-700 rounded-2xl"
-        />
-      </div>
+    <>
+      <div className="min-h-screen flex bg-backg justify-center items-center px-4">
+
+        <div className="flex w-full max-w-7xl bg-blend-color  rounded-2xl shadow-2xl overflow-hidden">
+        <div className="hidden md:block w-1/2  p-5 pt-15">
+            <img
+              src={images[currentImg]}
+              alt="auth-img"
+              className="w-full h-200 object-contain transition-all duration-700 rounded-2xl"
+            />
+          </div>
+
 
       <div className="flex items-center justify-between w-full md:w-1/2 p-6 relative">
         <div className="z-10 bg-blend-color text-darkblue p-8 w-full max-w-xl">
@@ -129,7 +133,7 @@ if (!emailRegex.test(formData.email)) {
               placeholder="Full Name"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="w-full px-6 py-2 rounded-md bg-white-200 border border-lightgreen text-darkblue placeholder-darkblue focus:outline-none focus:ring-2 focus:ring-pinkGlow"
+              className="w-full px-6 py-2 rounded-3xl bg-white-200 border border-lightgreen text-darkblue placeholder-darkblue focus:outline-none focus:ring-2 focus:ring-pinkGlow"
               required
             />
 
@@ -138,7 +142,7 @@ if (!emailRegex.test(formData.email)) {
               placeholder="Email address"
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              className="w-full px-4 py-2 rounded-md bg-white-200 border border-lightgreen text-darkblue placeholder-darkblue focus:outline-none focus:ring-2 focus:ring-pinkGlow"
+              className="w-full px-4 py-2 rounded-3xl bg-white-200 border border-lightgreen text-darkblue placeholder-darkblue focus:outline-none focus:ring-2 focus:ring-pinkGlow"
               required
             />
 
@@ -148,7 +152,7 @@ if (!emailRegex.test(formData.email)) {
                 placeholder="Password"
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                className="w-full px-4 py-2 rounded-md bg-white-200 border border-lightgreen text-darkblue placeholder-darkblue focus:outline-none focus:ring-2 focus:ring-pinkGlow"
+                className="w-full px-4 py-2 rounded-3xl bg-white-200 border border-lightgreen text-darkblue placeholder-darkblue focus:outline-none focus:ring-2 focus:ring-pinkGlow"
                 required
               />
               <span
@@ -165,7 +169,7 @@ if (!emailRegex.test(formData.email)) {
                 placeholder="Confirm Password"
                 value={formData.confirmPassword}
                 onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                className="w-full px-4 py-2 rounded-md bg-white-200 border border-lightgreen text-darkblue placeholder-darkblue focus:outline-none focus:ring-2 focus:ring-pinkGlow"
+                className="w-full px-4 py-2 rounded-3xl bg-white-200 border border-lightgreen text-darkblue placeholder-darkblue focus:outline-none focus:ring-2 focus:ring-pinkGlow"
                 required
               />
               <span
@@ -181,7 +185,7 @@ if (!emailRegex.test(formData.email)) {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-2 mt-2 bg-lightgreen text-white font-semibold rounded-md hover:bg-pinkGlow transition cursor-pointer"
+              className="w-full py-2 mt-2 bg-lightgreen text-white font-semibold rounded-3xl hover:bg-pinkGlow transition cursor-pointer"
             >
               {loading ? "Creating Account..." : "Create Account"}
             </button>
@@ -196,6 +200,8 @@ if (!emailRegex.test(formData.email)) {
         </div>
       </div>
     </div>
+    </div>
+    </>
   );
 };
 
