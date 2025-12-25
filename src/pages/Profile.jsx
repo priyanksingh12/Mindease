@@ -63,7 +63,7 @@ const [ageError, setAgeError] = useState("");
   const handleAgeChange = (e) => {
   const value = e.target.value;
 
-  // Allow empty while typing
+  
   if (value === "") {
     setAgeError("");
     setProfileData({ ...profileData, age: "" });

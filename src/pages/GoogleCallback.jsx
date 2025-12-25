@@ -6,14 +6,14 @@ export default function GoogleCallback() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = params.get("token"); // access token from callback URL
+    const token = params.get("token"); 
     const name = params.get("name");
     const email = params.get("email");
     const photo = params.get("photo");
-    const id = params.get("id"); // required user id
+    const id = params.get("id"); 
 
     if (token && id) {
-      // Clear outdated localStorage keys for a fresh session
+      
       Object.keys(localStorage).forEach((k) => {
         if (
           k.startsWith("user-null") ||
