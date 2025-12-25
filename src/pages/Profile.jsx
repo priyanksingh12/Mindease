@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { FaRegEdit, FaSave, FaUser, FaSignOutAlt } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { FaHome } from "react-icons/fa";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -26,7 +27,9 @@ const Profile = () => {
     profession: userProfession,
   });
   const [isEditing, setIsEditing] = useState(false);
-  const [phoneError, setPhoneError] = useState("");
+ const [phoneError, setPhoneError] = useState("");
+const [ageError, setAgeError] = useState("");
+
 
   const profilePhoto =
     storedUser.picture ||
@@ -36,6 +39,10 @@ const Profile = () => {
     "";
 
   const validateIndianMobile = (num) => /^[6-9]\d{9}$/.test(num);
+
+
+
+  
 
   const resetProfileData = () => {
     setProfileData({
@@ -52,6 +59,28 @@ const Profile = () => {
   const handleChange = (e) => {
     setProfileData({ ...profileData, [e.target.name]: e.target.value });
   };
+
+  const handleAgeChange = (e) => {
+  const value = e.target.value;
+
+  // Allow empty while typing
+  if (value === "") {
+    setAgeError("");
+    setProfileData({ ...profileData, age: "" });
+    return;
+  }
+
+  const num = Number(value);
+
+  if (Number.isNaN(num) || num <= 0) {
+    setAgeError("Please enter a valid age");
+  } else if (num > 100) {
+    setAgeError("Age cannot be more than 100");
+  } else {
+    setAgeError("");
+    setProfileData({ ...profileData, age: num });
+  }
+};
 
   const handlePhoneChange = (e) => {
     const value = e.target.value.replace(/\D/g, "");
@@ -92,14 +121,30 @@ const Profile = () => {
   }, []);
 
   return (
-    <div className="relative min-h-screen flex flex-col px-4 sm:px-6 md:px-10 lg:px-20 bg-backg">
-      <div className="absolute left-0 top-0 w-1/2 h-full bg-darkblue hidden sm:block"></div>
-      <div className="absolute right-0 top-0 w-1/2 h-full bg-lightgreen hidden sm:block"></div>
+  <div className="relative min-h-screen flex flex-col px-4 sm:px-6 md:px-10 lg:px-20 bg-gradient-to-br from-sky-50 via-yellow-50 to-orange-100
+">
+      
+
+      <div className="absolute left-0 top-0 w-1/2 h-full bg-gradient-to-b from-blue-100 to-transparent hidden sm:block opacity-80"></div>
+      <div className="absolute right-0 top-0 w-1/2 h-full bg-gradient-to-b from-purple-100 to-transparent hidden sm:block opacity-80"></div>
 
       <div className="relative z-10 w-full max-w-5xl bg-backg sm:p-10 rounded-lg shadow-xl my-10 mx-auto">
+
+        <div className="flex items-center justify-center mb-4">
+  <button
+    onClick={() => navigate("/dashboard")} 
+    className="inline-flex items-center gap-2 px-4 py-2 rounded-full
+               bg-white/80 text-[#1F2933] text-2xl font-medium shadow-sm
+               hover:bg-white hover:shadow-md transition"
+  >
+    <FaHome size={40} />
+   <p> Dashboard </p>
+  </button>
+</div>
+
         <h1 className="text-3xl font-bold text-black mb-6 text-center sm:text-left">My Profile</h1>
 
-        <div className="bg-white rounded-lg p-6 sm:p-10 flex flex-col sm:flex-row justify-around items-center gap-6">
+        <div className="bg-gradient-to-br from-blue-50 via-purple-50 to-indigo-100 rounded-lg p-6 sm:p-10 flex flex-col sm:flex-row justify-around items-center gap-6">
           <div className="flex items-center gap-4">
             {profilePhoto ? (
               <img src={profilePhoto} alt="profile" className="w-24 h-24 rounded-full object-cover" />
@@ -137,7 +182,7 @@ const Profile = () => {
         </div>
 
         <div
-          className="bg-white rounded-lg shadow-md px-6 py-8 mt-8"
+          className="bg-gradient-to-br from-blue-50 via-purple-50 to-indigo-100 rounded-lg shadow-md px-6 py-8 mt-8"
           style={{ minHeight: "400px" }}
         >
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
@@ -203,20 +248,26 @@ const Profile = () => {
               )}
             </div>
 
-            <div>
-              <p className="text-gray-600 text-xl font-semibold">Age</p>
-              {isEditing ? (
-                <input
-                  type="number"
-                  name="age"
-                  value={profileData.age}
-                  onChange={handleChange}
-                  className="border p-2 rounded w-full text-xl"
-                />
-              ) : (
-                <p className="font-medium text-xl">{profileData.age}</p>
-              )}
-            </div>
+          <div>
+  <p className="text-gray-600 text-xl font-semibold">Age</p>
+  {isEditing ? (
+    <>
+      <input
+        type="number"
+        name="age"
+        value={profileData.age}
+        onChange={handleAgeChange}
+        className={`border p-2 rounded w-full text-xl ${
+          ageError ? "border-red-500" : ""
+        }`}
+      />
+      {ageError && <p className="text-red-600 mt-1 text-lg">{ageError}</p>}
+    </>
+  ) : (
+    <p className="font-medium text-xl">{profileData.age}</p>
+  )}
+</div>
+
 
             <div>
               <p className="text-gray-600 text-xl font-semibold">Email</p>
@@ -228,5 +279,6 @@ const Profile = () => {
     </div>
   );
 };
+
 
 export default Profile;
